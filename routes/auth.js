@@ -44,21 +44,9 @@ router.post('/register', email_validator, password_validator, (req, res) => {
       email: email,
       password: hashedPassword
     })
-
-    /* 6. Create JWT and send back to the client. */
-    const jwt_sercret_key = process.env.JWT_SECRET_KEY
-    const token = jwt.sign({
-      email
-    },
-      jwt_sercret_key,
-      {
-        expiresIn:
-          "24h"
-      })
-
-    return res.json({
-      token: token
-    })
+    res.status(200).json(
+      { msg: "Success to register" }
+    )
   }
 })
 
@@ -77,8 +65,19 @@ router.get("/login", (req, res) => {
       msg: "Such user does not exist."
     })
   }
+  /* 6. Create JWT and send back to the client. */
+  const jwt_sercret_key = process.env.JWT_SECRET_KEY
+  const token = jwt.sign({
+    email
+  },
+    jwt_sercret_key,
+    {
+      expiresIn:
+        "1h"
+    })
+  res.cookie('jwt', token, { httpOnly: true, maxAge: 3600000 })
   res.status(200).json({
-    msg: "Success to login"
+    token: token
   })
 })
 
